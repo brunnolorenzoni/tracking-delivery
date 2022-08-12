@@ -1,8 +1,28 @@
-import server from "./server";
+import express from 'express'
+import cors from 'cors'
+import helmet from 'helmet';
 
-const PORT = 3000 || process.env.PORT;
+import routes from './routes'
 
-server.listen(PORT, () => {
-  console.log(`App is running on port: ${PORT}!`);
-  console.log(`http://localhost:${PORT}/`);
-});
+class App {
+  public express: express.Application
+
+  public constructor () {
+    this.express = express()
+    this.middlewares()
+    this.routes()
+  }
+
+  private middlewares (): void {
+    this.express.use(express.json())
+    this.express.use(cors())
+    this.express.use(helmet());
+  }
+
+
+  private routes (): void {
+    this.express.use(routes)
+  }
+}
+
+export default new App().express

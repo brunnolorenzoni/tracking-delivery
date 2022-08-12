@@ -3,6 +3,7 @@ module.exports = {
   parserOptions: {
     ecmaVersion: "latest",
     sourceType: "module",
+    
   },
   extends: ["plugin:@typescript-eslint/recommended"],
   env: {
