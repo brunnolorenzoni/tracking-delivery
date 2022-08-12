@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { Service } from '../interfaces/Service'
+import { Service } from '../../interfaces/Service'
 
 export default class DeliveryController {
 

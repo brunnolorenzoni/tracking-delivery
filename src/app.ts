@@ -2,7 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import helmet from 'helmet';
 
-import routes from './routes'
+import routes from './api/routes'
 
 class App {
   public express: express.Application
@@ -25,4 +25,4 @@ class App {
   }
 }
 
-export default new App().express
+export default new App()
