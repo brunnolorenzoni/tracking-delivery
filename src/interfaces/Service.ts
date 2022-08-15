@@ -1,3 +1,3 @@
 export interface Service {
-  execute(): boolean
+  execute(...args:unknown[]): unknown
 }
