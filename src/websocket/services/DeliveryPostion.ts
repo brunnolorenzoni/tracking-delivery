@@ -11,15 +11,19 @@ export default class DeliveryPostion {
   async execute (socket: Socket) {
     console.log('connected:', socket.id)
     const userId = socket.handshake.query.userId
-    
+    console.log({ userId })
     if(!userId) return false
     
     socket.join(userId)
     new ConsumerProvider(this.kafka).startConsumer(['topic'], ({ message }) => {
       const { key, value, headers} = message
-      socket.to(userId).emit('position', {
+      const { lat, lng } = JSON.parse(value)
+      socket.to(key).emit('position', {
         key,
-        value: JSON.parse(value),
+        value: {
+          lat: parseFloat(lat),
+          lng: parseFloat(lng)
+        },
         headers
       })
     })
