@@ -1,34 +1,23 @@
-import { Kafka, Consumer } from 'kafkajs';
+import { Kafka } from 'kafkajs';
 import { Socket } from 'socket.io'
+import ConsumerProvider from '../../infrastructure/kafka/Consumer';
 
 export default class DeliveryPostion {
 
-  consumer: Consumer
-
-  constructor(readonly kafka: Kafka) {
-    this.consumer = this.kafka.consumer({ groupId: 'my-group' })
+  constructor(private kafka: Kafka) {
     this.execute = this.execute.bind(this);
-    
-    this.connectTopic()
-  }
-  async connectTopic() {
-    await this.consumer.connect()
-    await this.consumer.subscribe({ topics: ['topic'] })
   }
   
   async execute (socket: Socket) {
-    console.log(socket.id);
-    await this.consumer.run({
-      eachMessage: async ({ message }) => {
-        socket.emit('position', {
-          key: message.key?.toString(),
-          value: message.value?.toString(),
-          headers: message.headers,
-        })
-      },
-  })
-
-
+    console.log('connected:', socket.id)
+    new ConsumerProvider(this.kafka).startConsumer(['topic'], ({ message }) => {
+      const { key, value, headers} = message
+      socket.emit('position', {
+        key,
+        value: JSON.parse(value),
+        headers
+      })
+    })
   }
 
 }

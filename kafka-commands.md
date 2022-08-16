@@ -4,16 +4,21 @@ docker exec -it kafka ./opt/bitnami/kafka/bin/kafka-topics.sh \
 --create \
 --bootstrap-server localhost:9092 \
 --replication-factor 1 \
---partitions 1 \
---topic TOPIC_NAME
+--partitions 3 \
+--topic topic
 ```
 
 ## Check topic
 ```
-docker exec -it kafka ./opt/bitnami/kafka/bin/kafka-topics.sh  \
+docker exec -it kafka ./opt/bitnami/kafka/bin/kafka-topics.sh \
   --describe \
-  --topic TOPIC_NAME \
+  --topic topic \
   --bootstrap-server localhost:9092
+```
+
+## List Topics
+```
+docker exec -it kafka ./opt/bitnami/kafka/bin/kafka-topics.sh --list --bootstrap-server localhost:9092
 ```
 
 ## Produce message
@@ -28,5 +33,10 @@ docker exec -it kafka ./opt/bitnami/kafka/bin/kafka-console-producer.sh \
 docker exec -it kafka ./opt/bitnami/kafka/bin/kafka-console-consumer.sh \
   --bootstrap-server localhost:9092 \
   --from-beginning \
-  --topic TOPIC_NAME
+  --topic topic
+```
+
+## Delete topic
+```
+docker exec -it kafka ./opt/bitnami/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --delete --topic topic
 ```

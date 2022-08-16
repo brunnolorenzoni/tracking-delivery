@@ -1,6 +1,5 @@
 import { Kafka } from 'kafkajs'
 import { Server } from 'socket.io'
-import { Service } from '../../interfaces/Service'
 
 import DeliveryPostion from '../services/DeliveryPostion'
 import KafkaConnection from '../../infrastructure/kafka'
@@ -10,12 +9,12 @@ export default class deliveryListeners {
 
   kafka: Kafka
 
-  deliveryPostion: Service
+  deliveryPostion: DeliveryPostion
   
   constructor (readonly io: Server) {
     
     this.kafka = new KafkaConnection({
-      clientId: 'my-app',
+      clientId: 'my-app-consumer',
       brokers: ['localhost:9092']
     }).kafka
 

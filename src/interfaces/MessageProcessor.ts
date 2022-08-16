@@ -1,3 +1,3 @@
 export interface MessageProcessor {
-  (...args:unknown[]): void
+  ({ topic: any, message: any }): unknown
 }

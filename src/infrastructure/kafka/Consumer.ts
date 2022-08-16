@@ -1,30 +1,35 @@
 import { Consumer, ConsumerSubscribeTopics, Kafka, EachMessagePayload } from 'kafkajs'
-import { MessageProcessor } from '../../interfaces/messageProcessor'
+import { MessageProcessor } from '../../interfaces/MessageProcessor'
 
 export default class ConsumerProvider {
-  private kafkaConsumer: Consumer
-  private messageProcessor: MessageProcessor
+  private consumer: Consumer
 
-  public constructor(kafkaConnection: Kafka, messageProcessor: MessageProcessor) {
-    this.messageProcessor = messageProcessor
-    this.kafkaConsumer = this.createKafkaConsumer(kafkaConnection)
+  public constructor(kafkaConnection: Kafka) {
+    this.consumer = this.createKafkaConsumer(kafkaConnection)
   }
 
-  public async startConsumer(topics: string[]): Promise<void> {
+  public async startConsumer(topics: string[], messageProcessor: MessageProcessor): Promise<void> {
+
     const topic: ConsumerSubscribeTopics = {
-      topics: topics,
-      fromBeginning: false
+      topics,
+      fromBeginning: true
     }
 
     try {
-      await this.kafkaConsumer.connect()
-      await this.kafkaConsumer.subscribe(topic)
+      await this.consumer.connect()
+      await this.consumer.subscribe(topic)
 
-      await this.kafkaConsumer.run({
+      await this.consumer.run({
         eachMessage: async (messagePayload: EachMessagePayload) => {
-          const { topic, partition, message } = messagePayload
-          const prefix = `${topic}[${partition} | ${message.offset}] / ${message.timestamp}`
-          this.messageProcessor(`- ${prefix} ${message.key}#${message.value}`)
+          const { topic, message } = messagePayload
+          messageProcessor({
+            topic,
+            message: {
+              key: message.key?.toString(),
+              value: message.value?.toString(),
+              headers:  message.headers,
+            }
+        })
         }
       })
     } catch (error) {
@@ -34,7 +39,7 @@ export default class ConsumerProvider {
 
 
   public async shutdown(): Promise<void> {
-    await this.kafkaConsumer.disconnect()
+    await this.consumer.disconnect()
   }
 
   private createKafkaConsumer(kafka: Kafka): Consumer {
