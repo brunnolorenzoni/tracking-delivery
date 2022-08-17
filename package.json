@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon",
+    "trajectory": "ts-node trajectories/trajectories-producer.ts",
     "lint": "eslint . --fix",
     "build": "tsc --build",
     "clean": "tsc --build --clean",
