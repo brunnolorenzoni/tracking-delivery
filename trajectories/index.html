@@ -31,14 +31,11 @@
 let marker, map;
 
 function initMap() {
-  // The location of Uluru
-  const uluru = { lat: 0, lng: 0 };
-  // The map, centered at Uluru
+  const startLocation = { lat: 0, lng: 0 };
   map = new google.maps.Map(document.getElementById("map"), {
     zoom: 3,
-    center: uluru,
+    center: startLocation,
   });
-  // The marker, positioned at Uluru
   marker = new google.maps.Marker({
     map: map
   });
