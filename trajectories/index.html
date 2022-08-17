@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>NodeJS WebSocket Server</title>
+
+  <style>
+    #map {
+      height: 400px;
+      width: 100%;
+    }
+
+    #result {
+      max-height: 200px;
+      overflow-y: auto;
+    }
+  </style>
+
+</head>
+<body>
+	<h1>Delivery Tracking</h1>
+	<h2>Order #17893324</h2>
+  <div id="map"></div>
+  <ul id="result"></ul>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBK298cFtFYXaEJJ9RFpMq8N8JQSTs78y8&callback=initMap" defer></script>
+  <script src="https://cdn.socket.io/4.5.0/socket.io.min.js" integrity="sha384-7EyYLQZgWBi67fBtVxw60/OWl1kjsfrPFcaU0pp0nAh+i8FD068QogUvg85Ewy1k" crossorigin="anonymous"></script>
+<script>
+
+let marker, map;
+
+function initMap() {
+  // The location of Uluru
+  const uluru = { lat: 0, lng: 0 };
+  // The map, centered at Uluru
+  map = new google.maps.Map(document.getElementById("map"), {
+    zoom: 3,
+    center: uluru,
+  });
+  // The marker, positioned at Uluru
+  marker = new google.maps.Marker({
+    map: map
+  });
+}
+
+window.initMap = initMap;
+
+
+const userId = "c5d59eda-1d7a-11ed-861d-0242ac120002"
+const socket = io("ws://localhost:8080", { 
+  query: {
+    userId
+  }
+});
+socket.on("connect", () => {
+  console.log(socket.id); 
+});
+
+
+const resultDiv = document.getElementById('result')
+
+let controlFirst = true;
+socket.on("position", (data) => {
+  console.log(data)
+  const li = document.createElement("li");
+  li.appendChild(document.createTextNode(JSON.stringify(data.value)));
+  console.log(data.value)
+  if(controlFirst) {
+    map.setCenter(data.value)
+    map.setZoom(15); 
+    controlFirst = false
+  }
+  marker.setPosition(data.value);
+  resultDiv.appendChild(li);
+  resultDiv.scrollTop = resultDiv.scrollHeight;
+});
+
+</script>
+</body>
+</html>

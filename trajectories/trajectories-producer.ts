@@ -35,7 +35,7 @@ fs.readdirSync('./trajectories/data/').forEach(file => {
       await producer.sendMessage('topic',message)
       console.log('MENSAGEM ENVIADA', message)
       await producer.shutdown()
-      await sleep(2000);
+      await sleep(1000);
     }
   }
   process.exit(0)
